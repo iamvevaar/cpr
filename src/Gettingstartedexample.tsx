@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { CropperRef, Cropper , Coordinates } from "react-advanced-cropper";
+import { useRef, useState } from "react";
+import { CropperRef , Coordinates} from "react-advanced-cropper";
 import "react-advanced-cropper/dist/style.css";
 
 import { FixedCropper, ImageRestriction } from "react-advanced-cropper";
@@ -13,9 +13,9 @@ export const Gettingstartedexample = () => {
   );
   const cropperRef = useRef<CropperRef>(null);
 
-  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [, setCoordinates] = useState<Coordinates | null>(null);
 
-  const [result, setResult] = useState<string>();
+  const [, setResult] = useState<string>();
 
   const [croppedImages, setCroppedImages] = useState<string[]>([]);
 
@@ -30,18 +30,17 @@ export const Gettingstartedexample = () => {
       });
     }
   };
+  
 
   return (
     <>
-    {/* <ImageCropper image={result} /> */}
+    
       <button onClick={onCrop}>CROP</button>
-      {/* {result && <img src={result} alt="cropped" />} */}
-
       {croppedImages.map((croppedImage, index) => (
         <div key={index}>
           <img src={croppedImage} alt={`cropped-${index}`} />
         </div>
-      ))}
+      ))}      
 
       <FixedCropper
         ref={cropperRef}
