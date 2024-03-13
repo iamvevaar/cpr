@@ -4,6 +4,7 @@ import "react-advanced-cropper/dist/style.css";
 
 import { FixedCropper, ImageRestriction } from "react-advanced-cropper";
 import { cropImage } from "./utility/cropImage";
+import SizeSelector from "./components/SizeSelector";
 
 
 
@@ -30,10 +31,22 @@ export const Gettingstartedexample = () => {
       });
     }
   };
-  
+
+  const [one] = useState<object>({h:1350 , w:2160  });
+  const [two] = useState<object>({ h:1080 , w:2160 });
+  const [three] = useState<object>({h:566 , w:2160 });
+  const [selectedSize, setSelectedSize] = useState<string>("one");
+
+  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedSize(event.target.value);
+  };
+
+  const selectedSizeValue = selectedSize === "one" ? one : selectedSize === "two" ? two : three;
 
   return (
     <>
+    <SizeSelector selectedSize={selectedSize} handleSizeChange={handleSizeChange} />
+     
     
       <button onClick={onCrop}>CROP</button>
       {croppedImages.map((croppedImage, index) => (
@@ -42,12 +55,13 @@ export const Gettingstartedexample = () => {
         </div>
       ))}      
 
+
       <FixedCropper
         ref={cropperRef}
         src={image}
         stencilSize={{
-          width: 852,
-          height: 532,
+          width: (selectedSizeValue as { w: number }).w,
+          height: (selectedSizeValue as { h: number }).h,
         }}
         stencilProps={{
           handlers: false,
