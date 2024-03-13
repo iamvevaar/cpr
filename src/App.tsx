@@ -1,10 +1,10 @@
-import { Gettingstartedexample } from './Gettingstartedexample'
+import { Dashboard} from './Dashboard'
 
 function App() {
 
   return (
     <>
-    <Gettingstartedexample />
+    <Dashboard/>
     </>
   )
 }

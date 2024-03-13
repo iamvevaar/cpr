@@ -5,10 +5,10 @@ import "react-advanced-cropper/dist/style.css";
 import { FixedCropper, ImageRestriction } from "react-advanced-cropper";
 import { cropImage } from "./utility/cropImage";
 import SizeSelector from "./components/SizeSelector";
+import "./dashboard.css";
 
 
-
-export const Gettingstartedexample = () => {
+export const Dashboard = () => {
   const [image] = useState(
     "../src/assets/god.png"
   );
@@ -57,6 +57,7 @@ export const Gettingstartedexample = () => {
 
 
       <FixedCropper
+      className="fixed-cropper"
         ref={cropperRef}
         src={image}
         stencilSize={{
