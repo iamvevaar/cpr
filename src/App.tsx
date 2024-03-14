@@ -5,7 +5,7 @@ function App() {
   return (
     <>
     <Dashboard/>
-    <p>Made With 💗 By Vevaar</p>
+    <p className='text-yellow-500'>Made With 💗 By Vevaar</p>
     </>
   )
 }
