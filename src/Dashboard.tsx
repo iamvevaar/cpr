@@ -55,13 +55,35 @@ export const Dashboard = () => {
 
   return (
     <>
-    <input type="file" accept="image/*" onChange={handleImageChange} />
+    {/* <input type="file" accept="image/*" onChange={handleImageChange} />
+     */}
 
 
+     {/* this is file uploader component */}
+    <div className="flex items-center justify-center p-4">
+      <div className={`w-64 bg-slate-900 p-4 rounded border-dashed border-2 ${image ? 'border-blue-500' : 'border-gray-300'} flex flex-col items-center justify-center`}>
+        <label htmlFor="fileInput" className="cursor-pointer">
+          <svg className="w-full h-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          {image ? (<span className="text-zinc-200">Now Select The Ratio</span>) : (<span className="text-gray-400">Select Your Pic</span>)}
+          
+        </label>
+        <input id="fileInput" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+      </div>
+    </div>
+
+    
+    {/* this is select ratio component */}
+    <div className="flex justify-center">
+
+    {image && 
       <SizeSelector
-        selectedSize={selectedSize}
-        handleSizeChange={handleSizeChange}
+      selectedSize={selectedSize}
+      handleSizeChange={handleSizeChange}
       />
+    }
+    </div>
 
       <button onClick={onCrop}>CROP</button>
       {croppedImages.map((croppedImage, index) => (
@@ -70,6 +92,8 @@ export const Dashboard = () => {
         </div>
       ))}
       
+      <div className="flex justify-center">
+
 
 
       <FixedCropper
@@ -88,6 +112,7 @@ export const Dashboard = () => {
         }}
         imageRestriction={ImageRestriction.stencil}
         />
+        </div>
     </>
   );
 };

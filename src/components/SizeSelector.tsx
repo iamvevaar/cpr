@@ -6,40 +6,30 @@ interface SizeSelectorProps {
 }
 
 const SizeSelector: React.FC<SizeSelectorProps> = ({ selectedSize, handleSizeChange }) => {
+  // Define an array of sizes
+  const sizes = [
+    { id: "one", value: "one", label: "Size One" },
+    { id: "two", value: "two", label: "Size Two" },
+    { id: "three", value: "three", label: "Size Three" }
+  ];
+
   return (
     <>
-      <div>
-        <input
-          type="radio"
-          id="one"
-          name="size"
-          value="one"
-          checked={selectedSize === "one"}
-          onChange={handleSizeChange}
-        />
-        <label htmlFor="one">Size One</label>
-      </div>
-      <div>
-        <input
-          type="radio"
-          id="two"
-          name="size"
-          value="two"
-          checked={selectedSize === "two"}
-          onChange={handleSizeChange}
-        />
-        <label htmlFor="two">Size Two</label>
-      </div>
-      <div>
-        <input
-          type="radio"
-          id="three"
-          name="size"
-          value="three"
-          checked={selectedSize === "three"}
-          onChange={handleSizeChange}
-        />
-        <label htmlFor="three">Size Three</label>
+    <div className="flex w-max border-dashed border-2 p-4 bg-slate-900 border-blue-500">
+
+      {sizes.map((size) => (
+        <div key={size.id} >
+          <input
+            type="radio"
+            id={size.id}
+            name="size"
+            value={size.value}
+            checked={selectedSize === size.value}
+            onChange={handleSizeChange}
+            />
+          <label htmlFor={size.id}>{size.label}</label>
+        </div>
+      ))}
       </div>
     </>
   );
