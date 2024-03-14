@@ -8,7 +8,7 @@ import SizeSelector from "./components/SizeSelector";
 import "./dashboard.css";
 
 export const Dashboard = () => {
-  const [image] = useState("../src/assets/jod.png");
+  const [image, setImage] = useState<any>(null);
   const cropperRef = useRef<any>(null);
 
   const [, setCoordinates] = useState<Coordinates | null>(null);
@@ -41,8 +41,23 @@ export const Dashboard = () => {
   const selectedSizeValue =
     selectedSize === "one" ? one : selectedSize === "two" ? two : three;
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      setImage(result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <>
+    <input type="file" accept="image/*" onChange={handleImageChange} />
+
+
       <SizeSelector
         selectedSize={selectedSize}
         handleSizeChange={handleSizeChange}
