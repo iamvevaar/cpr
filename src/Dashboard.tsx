@@ -5,7 +5,7 @@ import "react-advanced-cropper/dist/style.css";
 import { FixedCropper, ImageRestriction } from "react-advanced-cropper";
 import { cropImage } from "./utility/cropImage";
 import SizeSelector from "./components/SizeSelector";
-import "./dashboard.css";
+// import "./dashboard.css";
 
 export const Dashboard = () => {
   const [image, setImage] = useState<any>(null);
@@ -69,9 +69,11 @@ export const Dashboard = () => {
           <img src={croppedImage} alt={`cropped-${index}`} />
         </div>
       ))}
+      
+
 
       <FixedCropper
-        className="fixed-cropper"
+        className="w-[40vw]"     
         ref={cropperRef}
         src={image}
         stencilSize={{
@@ -85,7 +87,7 @@ export const Dashboard = () => {
           resizable: false,
         }}
         imageRestriction={ImageRestriction.stencil}
-      />
+        />
     </>
   );
 };
