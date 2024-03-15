@@ -97,9 +97,9 @@ export const Dashboard = () => {
               ></path>
             </svg>
             {image ? (
-              <span className="text-zinc-200">Now Select The Ratio</span>
+              <span className="font-noto text-zinc-200">Now Select The Ratio</span>
             ) : (
-              <span className="text-gray-400">Select Your Pic</span>
+              <span className="font-noto text-gray-400">Select Your Pic</span>
             )}
           </label>
           <input
