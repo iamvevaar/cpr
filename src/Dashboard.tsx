@@ -130,6 +130,7 @@ export const Dashboard = () => {
       <div className="flex justify-center">
         {croppedImages.map((croppedImage, index) => (
           <div key={index} className="inline-block w-32 m-2">
+            <div className="font-noto text-white text-center ">preview</div>
             <img src={croppedImage} alt={`cropped-${index}`} />
           </div>
         ))}
