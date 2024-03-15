@@ -7,7 +7,15 @@ import { cropImage } from "./utility/cropImage";
 import SizeSelector from "./components/SizeSelector";
 import DownloadAllButton from "./utility/DownloadAllButton";
 import CustomButton from "./components/CustomButton";
-// import "./dashboard.css";
+
+
+const Loader = () => {
+  return (
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-b-white"></div>
+    </div>
+  );
+};
 
 export const Dashboard = () => {
   const [image, setImage] = useState<any>(null);
@@ -19,7 +27,11 @@ export const Dashboard = () => {
 
   const [croppedImages, setCroppedImages] = useState<string[]>([]);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false); // New state variable for loader
+
+
   const onCrop = () => {
+    setIsLoading(true); // Show loader when crop button is clicked
     if (cropperRef.current) {
       setCoordinates(cropperRef.current.getCoordinates());
       const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
@@ -27,6 +39,7 @@ export const Dashboard = () => {
       // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
       cropImage(croppedImageDataUrl, (croppedImages) => {
         setCroppedImages(croppedImages);
+        setIsLoading(false); // Hide loader when cropping is done
       });
     }
   };
@@ -57,6 +70,8 @@ export const Dashboard = () => {
 
   return (
     <>
+      {/* Loader */}
+      {isLoading && <Loader />}
       {/* <input type="file" accept="image/*" onChange={handleImageChange} />
        */}
 
