@@ -9,7 +9,7 @@ const DownloadAllButton: React.FC<DownloadAllButtonProps> = ({ croppedImages }) 
     // Create a temporary anchor element
     const link = document.createElement("a");
     link.href = croppedImage;
-    link.download = `cropped_${index}.png`;
+    link.download = `vevaar_${index}.jpg`;
     
     // Trigger a click event to start the download
     document.body.appendChild(link);
