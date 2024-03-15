@@ -34,7 +34,7 @@ export const Dashboard = () => {
   const [one] = useState<object>({ h: 1350, w: 2160 });
   const [two] = useState<object>({ h: 1080, w: 2160 });
   const [three] = useState<object>({ h: 566, w: 2160 });
-  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("one");
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedSize(event.target.value);
@@ -99,7 +99,7 @@ export const Dashboard = () => {
 
       {/* this is select ratio component */}
       <div className="transition flex justify-center">
-        {(
+        {image &&(
           <SizeSelector
             selectedSize={selectedSize}
             handleSizeChange={handleSizeChange}
@@ -108,7 +108,7 @@ export const Dashboard = () => {
       </div>
 
       <div className=" transition flex justify-center my-4">
-        {selectedSize && (
+        {image && (
           <CustomButton text="Crop" onCrop={onCrop} />
         )}
       </div>
@@ -122,7 +122,7 @@ export const Dashboard = () => {
       <DownloadAllButton croppedImages={croppedImages} />
       <div className="flex justify-center">
         <FixedCropper
-          className="w-[40vw]"
+          className="w-[90vw]"
           ref={cropperRef}
           src={image}
           stencilSize={{
