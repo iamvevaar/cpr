@@ -99,7 +99,7 @@ export const Dashboard = () => {
 
       {/* this is select ratio component */}
       <div className="transition flex justify-center">
-        {image && (
+        {(
           <SizeSelector
             selectedSize={selectedSize}
             handleSizeChange={handleSizeChange}
@@ -137,6 +137,7 @@ export const Dashboard = () => {
           }}
           imageRestriction={ImageRestriction.stencil}
         />
+        
       </div>
     </>
   );
