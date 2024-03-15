@@ -22,7 +22,7 @@ const SizeSelector: React.FC<SizeSelectorProps> = ({
   return (
     <>
       <div className="flex flex-col md:w-[40vw] w-[90vw] border-dashed border-2 overflow-hidden p-4 bg-slate-900 border-blue-500 sm:border-blue-500">
-        <div className="flex justify-between">
+        <div className="flex justify-between mb-4">
           {sizes.map((size) => (
             <div key={size.id} className="flex items-center">
               <input
@@ -32,6 +32,7 @@ const SizeSelector: React.FC<SizeSelectorProps> = ({
                 value={size.value}
                 checked={selectedSize === size.value}
                 onChange={handleSizeChange}
+                className="appearance-none border-2 border-gray-400 rounded-full w-3 h-3 checked:bg-blue-500 checked:border-transparent focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               />
               <label className="text-white px-2" htmlFor={size.id}>
                 {size.label}
