@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.2.2",
+    "@vercel/speed-insights": "^1.0.10",
     "filesaver": "^0.0.13",
     "jszip": "^3.10.1",
     "react": "^18.2.0",
