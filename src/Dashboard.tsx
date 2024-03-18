@@ -51,20 +51,6 @@ export const Dashboard = () => {
     }
   }, [image , croppedImages , inputRef]);
 
-  // const onCrop = () => {
-  //   setIsLoading(true); // Show loader when crop button is clicked
-  //   if (cropperRef.current) {
-  //     setCoordinates(cropperRef.current.getCoordinates());
-  //     const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
-  //     setResult(croppedImageDataUrl);
-  //     // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
-  //     // Pass the desired number of pieces to cropImage function
-  //     cropImage(croppedImageDataUrl, divs, (croppedImages) => {
-  //       setCroppedImages(croppedImages);
-  //       setIsLoading(false); // Hide loader when cropping is done
-  //     });
-  //   }
-  // };
   const onCrop = useCallback(() => {
     setIsLoading(true);
     if (cropperRef.current) {
@@ -78,22 +64,14 @@ export const Dashboard = () => {
     }
   }, [divs]);
 
-  // const [one] = useState<object>({ h: 1350, w: 1080 });
-  // const [two] = useState<object>({ h: 1080, w: 1080 });
-  // const [three] = useState<object>({ h: 566, w: 1080 });
+  
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
   const handleSizeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedSize(event.target.value);
   }, []);
 
-  // const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSelectedSize(event.target.value);
-  // };
-
-  // const selectedSizeValue =
-  //   selectedSize === "one" ? one : selectedSize === "two" ? two : three;
-
+ 
   const selectedSizeValue = useMemo(() => {
     const sizes: { [key: string]: { h: number; w: number } } = {
       one: { h: 1350, w: 1080 },
@@ -116,24 +94,12 @@ export const Dashboard = () => {
       reader.readAsDataURL(file);
     }, []);
 
-  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
-
-  //   const reader = new FileReader();
-  //   reader.onloadend = () => {
-  //     const result = reader.result as string;
-  //     setImage(result);
-  //   };
-  //   reader.readAsDataURL(file);
-  // };
 
   return (
     <>
       {/* Loader */}
       {isLoading && <Loader />}
-      {/* <input type="file" accept="image/*" onChange={handleImageChange} />
-       */}
+
 
       {/* this is file uploader component */}
       <div className="flex items-center justify-center p-4">
@@ -165,7 +131,8 @@ export const Dashboard = () => {
             )}
           </label>
           <input
-          ref={inputRef}
+            disabled={image ? true : false}
+            ref={inputRef}
             id="fileInput"
             type="file"
             accept="image/*"
@@ -179,6 +146,7 @@ export const Dashboard = () => {
       <div className="flex items-center justify-center p-4">
 
       <input
+      ref={inputRef}
         className="w-[40vw] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm font-bold text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
         type="number"
         name=""
