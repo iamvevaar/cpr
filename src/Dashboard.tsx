@@ -116,6 +116,7 @@ export const Dashboard = () => {
       </div>
 
       <input 
+      className="border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm font-bold text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
       type="number" 
       name="" 
       id=""  
