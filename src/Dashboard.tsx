@@ -32,9 +32,8 @@ export const Dashboard = () => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-
   useEffect(() => {
-    if (image ||  croppedImages.length > 0) {
+    if (image || croppedImages.length > 0) {
       const handleEsc = (event: KeyboardEvent) => {
         if (event.keyCode === 27) {
           setImage(null);
@@ -49,7 +48,7 @@ export const Dashboard = () => {
         window.removeEventListener("keydown", handleEsc);
       };
     }
-  }, [image , croppedImages , inputRef]);
+  }, [image, croppedImages, inputRef]);
 
   const onCrop = useCallback(() => {
     setIsLoading(true);
@@ -64,14 +63,15 @@ export const Dashboard = () => {
     }
   }, [divs]);
 
-  
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
-  const handleSizeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedSize(event.target.value);
-  }, []);
+  const handleSizeChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSelectedSize(event.target.value);
+    },
+    []
+  );
 
- 
   const selectedSizeValue = useMemo(() => {
     const sizes: { [key: string]: { h: number; w: number } } = {
       one: { h: 1350, w: 1080 },
@@ -81,25 +81,25 @@ export const Dashboard = () => {
     return sizes[selectedSize];
   }, [selectedSize]);
 
-
-    const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
-  
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result;
         setImage(result);
       };
       reader.readAsDataURL(file);
-    }, []);
-
+    },
+    []
+  );
 
   return (
     <>
       {/* Loader */}
       {isLoading && <Loader />}
-
 
       {/* this is file uploader component */}
       <div className="flex items-center justify-center p-4">
@@ -142,26 +142,24 @@ export const Dashboard = () => {
         </div>
       </div>
 
-
       <div className="flex items-center justify-center p-4">
-
-      <input
-      ref={inputRef}
-        className="w-[40vw] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm font-bold text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-        type="number"
-        name=""
-        id=""
-        min="2"
-        max="10"
-        placeholder="Enter number of pieces to crop from 2 to 10"
-        onChange={(e) => {
-          const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
-          if (
-            value !== "" &&
-            !isNaN(Number(value)) &&
-            Number(value) !== 0 &&
-            Number(value) >= 2 &&
-            Number(value) <= 10
+        <input
+          ref={inputRef}
+          className="w-[20rem] placeholder:text-[12px] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          type="number"
+          name=""
+          id=""
+          min="2"
+          max="10"
+          placeholder="Enter number of pieces to crop from 2 to 10"
+          onChange={(e) => {
+            const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
+            if (
+              value !== "" &&
+              !isNaN(Number(value)) &&
+              Number(value) !== 0 &&
+              Number(value) >= 2 &&
+              Number(value) <= 10
             ) {
               setDivs(Number(value));
             } else {
@@ -172,8 +170,8 @@ export const Dashboard = () => {
               // alert("Please enter a number between 2 and 10.");
             }
           }}
-          />
-          </div>
+        />
+      </div>
 
       {/* this is select ratio component */}
       <div className="transition flex justify-center">
@@ -188,16 +186,19 @@ export const Dashboard = () => {
       <div className=" transition flex justify-center my-4">
         {image && <CustomButton text="Crop" onCrop={onCrop} />}
       </div>
-      <div className="flex justify-center">
-        {croppedImages.map((croppedImage, index) => (
-          <div key={index} className="inline-block w-32 m-2">
-            <div className="font-noto text-white text-center ">preview</div>
-            <img src={croppedImage} alt={`cropped-${index}`} />
-          </div>
-        ))}
+
+      <div className="grid grid-cols-2">
+        <div className="flex flex-col items-end">
+          {croppedImages.map((croppedImage, index) => (
+            <div key={index} className="flex flex-col w-32 m-2">
+              <div className="font-noto text-white text-center text-[12px]">preview {index+1}</div>
+              <img src={croppedImage} alt={`cropped-${index}`} />
+            </div>
+          ))}
+        </div>
+        <DownloadAllButton croppedImages={croppedImages} />
       </div>
       {console.log(croppedImages)}
-      <DownloadAllButton croppedImages={croppedImages} />
       <div className="flex justify-center">
         <FixedCropper
           className="w-[90vw]"
