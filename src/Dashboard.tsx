@@ -20,16 +20,17 @@ const Loader = () => {
 export const Dashboard = () => {
   const [image, setImage] = useState<any>(null);
   const cropperRef = useRef<any>(null);
-
+  
   const [, setCoordinates] = useState<Coordinates | null>(null);
-
+  
   const [, setResult] = useState<string>();
-
+  
   const [croppedImages, setCroppedImages] = useState<string[]>([]);
-
+  
   const [isLoading, setIsLoading] = useState<boolean>(false); // New state variable for loader
-
-
+  
+  const [divs , setDivs] = useState<number>(2);  
+  
   const onCrop = () => {
     setIsLoading(true); // Show loader when crop button is clicked
     if (cropperRef.current) {
@@ -37,16 +38,17 @@ export const Dashboard = () => {
       const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
       setResult(croppedImageDataUrl);
       // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
-      cropImage(croppedImageDataUrl, (croppedImages) => {
+      // Pass the desired number of pieces to cropImage function
+      cropImage(croppedImageDataUrl , divs , (croppedImages) => {
         setCroppedImages(croppedImages);
         setIsLoading(false); // Hide loader when cropping is done
       });
     }
   };
 
-  const [one] = useState<object>({ h: 1350, w: 2160 });
-  const [two] = useState<object>({ h: 1080, w: 2160 });
-  const [three] = useState<object>({ h: 566, w: 2160 });
+  const [one] = useState<object>({ h: 1350, w: 1080 });
+  const [two] = useState<object>({ h: 1080, w: 1080 });
+  const [three] = useState<object>({ h: 566, w: 1080 });
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +69,7 @@ export const Dashboard = () => {
     };
     reader.readAsDataURL(file);
   };
+
 
   return (
     <>
@@ -112,6 +115,24 @@ export const Dashboard = () => {
         </div>
       </div>
 
+      <input 
+      type="number" 
+      name="" 
+      id=""  
+      onChange={(e) => {
+        const value = Number(e.target.value);
+        if (value !== 0 && !isNaN(value)) {
+          setDivs(value);
+        } else {
+          // Show an error message or set to a default value
+          // For example:
+          setDivs(2); // Set to a default value
+          // Or show an error message to the user
+          // alert("Please enter a number greater than zero.");
+        }
+      }} 
+      />
+
       {/* this is select ratio component */}
       <div className="transition flex justify-center">
         {image &&(
@@ -135,6 +156,7 @@ export const Dashboard = () => {
           </div>
         ))}
       </div>
+      {console.log(croppedImages)}
       <DownloadAllButton croppedImages={croppedImages} />
       <div className="flex justify-center">
         <FixedCropper
@@ -142,7 +164,7 @@ export const Dashboard = () => {
           ref={cropperRef}
           src={image}
           stencilSize={{
-            width: (selectedSizeValue as { w: number }).w,
+            width: (selectedSizeValue as { w: number }).w * divs,
             height: (selectedSizeValue as { h: number }).h,
           }}
           stencilProps={{
