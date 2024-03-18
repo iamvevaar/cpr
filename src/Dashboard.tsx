@@ -96,6 +96,25 @@ export const Dashboard = () => {
     []
   );
 
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
+    if (
+      value !== "" &&
+      !isNaN(Number(value)) &&
+      Number(value) !== 0 &&
+      Number(value) >= 2 &&
+      Number(value) <= 10
+    ) {
+      setDivs(Number(value));
+    } else {
+      // Show an error message or set to a default value
+      // For example:
+      setDivs(2); // Set to a default value within the range
+      // Or show an error message to the user
+      // alert("Please enter a number between 2 and 10.");
+    }
+  }, [divs]);
+
   return (
     <>
       {/* Loader */}
@@ -153,24 +172,7 @@ export const Dashboard = () => {
           min="2"
           max="10"
           placeholder="Enter number of pieces to crop from 2 to 10"
-          onChange={(e) => {
-            const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
-            if (
-              value !== "" &&
-              !isNaN(Number(value)) &&
-              Number(value) !== 0 &&
-              Number(value) >= 2 &&
-              Number(value) <= 10
-            ) {
-              setDivs(Number(value));
-            } else {
-              // Show an error message or set to a default value
-              // For example:
-              setDivs(2); // Set to a default value within the range
-              // Or show an error message to the user
-              // alert("Please enter a number between 2 and 10.");
-            }
-          }}
+          onChange={handleInputChange}
         />
       </div>
 
