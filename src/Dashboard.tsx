@@ -50,6 +50,7 @@ export const Dashboard = () => {
     }
   }, [image, croppedImages, inputRef]);
 
+  // New function to handle the crop button click
   const onCrop = useCallback(() => {
     setIsLoading(true);
     if (cropperRef.current) {
@@ -65,6 +66,7 @@ export const Dashboard = () => {
 
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
+  // New function to handle the size change
   const handleSizeChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedSize(event.target.value);
@@ -72,6 +74,7 @@ export const Dashboard = () => {
     []
   );
 
+  // New memoized value for the selected size
   const selectedSizeValue = useMemo(() => {
     const sizes: { [key: string]: { h: number; w: number } } = {
       one: { h: 1350, w: 1080 },
@@ -81,6 +84,7 @@ export const Dashboard = () => {
     return sizes[selectedSize];
   }, [selectedSize]);
 
+  // New function to handle the image change
   const handleImageChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -204,7 +208,8 @@ export const Dashboard = () => {
         </div>
         <DownloadAllButton croppedImages={croppedImages} />
       </div>
-      {console.log(croppedImages)}
+        
+        {/* this is cropper component */}
       <div className="flex justify-center">
         <FixedCropper
           className="w-[90vw]"
