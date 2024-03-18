@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Coordinates } from "react-advanced-cropper";
 import "react-advanced-cropper/dist/style.css";
 
@@ -30,44 +30,103 @@ export const Dashboard = () => {
 
   const [divs, setDivs] = useState<number>(2);
 
-  const onCrop = () => {
-    setIsLoading(true); // Show loader when crop button is clicked
+  const inputRef = useRef<HTMLInputElement>(null);
+
+
+  useEffect(() => {
+    if (image ||  croppedImages.length > 0) {
+      const handleEsc = (event: KeyboardEvent) => {
+        if (event.keyCode === 27) {
+          setImage(null);
+          setCroppedImages([]);
+          if (inputRef.current) {
+            inputRef.current.value = ""; // Clear the file input
+          }
+        }
+      };
+      window.addEventListener("keydown", handleEsc);
+      return () => {
+        window.removeEventListener("keydown", handleEsc);
+      };
+    }
+  }, [image , croppedImages , inputRef]);
+
+  // const onCrop = () => {
+  //   setIsLoading(true); // Show loader when crop button is clicked
+  //   if (cropperRef.current) {
+  //     setCoordinates(cropperRef.current.getCoordinates());
+  //     const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
+  //     setResult(croppedImageDataUrl);
+  //     // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
+  //     // Pass the desired number of pieces to cropImage function
+  //     cropImage(croppedImageDataUrl, divs, (croppedImages) => {
+  //       setCroppedImages(croppedImages);
+  //       setIsLoading(false); // Hide loader when cropping is done
+  //     });
+  //   }
+  // };
+  const onCrop = useCallback(() => {
+    setIsLoading(true);
     if (cropperRef.current) {
       setCoordinates(cropperRef.current.getCoordinates());
       const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
       setResult(croppedImageDataUrl);
-      // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
-      // Pass the desired number of pieces to cropImage function
       cropImage(croppedImageDataUrl, divs, (croppedImages) => {
         setCroppedImages(croppedImages);
-        setIsLoading(false); // Hide loader when cropping is done
+        setIsLoading(false);
       });
     }
-  };
+  }, [divs]);
 
-  const [one] = useState<object>({ h: 1350, w: 1080 });
-  const [two] = useState<object>({ h: 1080, w: 1080 });
-  const [three] = useState<object>({ h: 566, w: 1080 });
+  // const [one] = useState<object>({ h: 1350, w: 1080 });
+  // const [two] = useState<object>({ h: 1080, w: 1080 });
+  // const [three] = useState<object>({ h: 566, w: 1080 });
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
-  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSizeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedSize(event.target.value);
-  };
+  }, []);
 
-  const selectedSizeValue =
-    selectedSize === "one" ? one : selectedSize === "two" ? two : three;
+  // const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSelectedSize(event.target.value);
+  // };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  // const selectedSizeValue =
+  //   selectedSize === "one" ? one : selectedSize === "two" ? two : three;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setImage(result);
+  const selectedSizeValue = useMemo(() => {
+    const sizes: { [key: string]: { h: number; w: number } } = {
+      one: { h: 1350, w: 1080 },
+      two: { h: 1080, w: 1080 },
+      three: { h: 566, w: 1080 },
     };
-    reader.readAsDataURL(file);
-  };
+    return sizes[selectedSize];
+  }, [selectedSize]);
+
+
+    const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+  
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        setImage(result);
+      };
+      reader.readAsDataURL(file);
+    }, []);
+
+  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => {
+  //     const result = reader.result as string;
+  //     setImage(result);
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
 
   return (
     <>
@@ -106,6 +165,7 @@ export const Dashboard = () => {
             )}
           </label>
           <input
+          ref={inputRef}
             id="fileInput"
             type="file"
             accept="image/*"
