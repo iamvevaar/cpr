@@ -95,7 +95,7 @@
 // }
 
 
-export const cropImage = (image:any, handleCroppedImages: (croppedImages: string[]) => void) => {
+export const cropImage = (image:any, numberOfPieces: number, handleCroppedImages: (croppedImages: string[]) => void) => {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -103,20 +103,28 @@ export const cropImage = (image:any, handleCroppedImages: (croppedImages: string
   img.src = image;
 
   img.onload = () => {
-    const halfWidth = img.width / 2;
-    canvas.width = halfWidth;
+    const pieceWidth = img.width / numberOfPieces;
+    canvas.width = pieceWidth;
     canvas.height = img.height;
 
-    // Crop left half
-    ctx!.drawImage(img, 0, 0, halfWidth, img.height, 0, 0, halfWidth, img.height);
-    const leftHalf = canvas.toDataURL();
+    const croppedImages = [];
 
-    // Crop right half
-    ctx!.clearRect(0, 0, canvas.width, canvas.height);
-    ctx!.drawImage(img, halfWidth, 0, halfWidth, img.height, 0, 0, halfWidth, img.height);
-    const rightHalf = canvas.toDataURL();
+    for (let i = 0; i < numberOfPieces; i++) {
+      // Calculate the starting position for each piece
+      const startX = i * pieceWidth;
+
+      // Crop the piece
+      ctx!.drawImage(img, startX, 0, pieceWidth, img.height, 0, 0, pieceWidth, img.height);
+      const croppedPiece = canvas.toDataURL();
+
+      // Push the cropped piece into the array
+      croppedImages.push(croppedPiece);
+
+      // Clear the canvas for the next iteration
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     // Call the callback function with cropped images
-    handleCroppedImages([leftHalf, rightHalf]);
+    handleCroppedImages(croppedImages);
   };
 };

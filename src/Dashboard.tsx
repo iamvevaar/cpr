@@ -8,7 +8,6 @@ import SizeSelector from "./components/SizeSelector";
 import DownloadAllButton from "./utility/DownloadAllButton";
 import CustomButton from "./components/CustomButton";
 
-
 const Loader = () => {
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -29,6 +28,7 @@ export const Dashboard = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false); // New state variable for loader
 
+  const [divs, setDivs] = useState<number>(2);
 
   const onCrop = () => {
     setIsLoading(true); // Show loader when crop button is clicked
@@ -37,16 +37,17 @@ export const Dashboard = () => {
       const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
       setResult(croppedImageDataUrl);
       // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
-      cropImage(croppedImageDataUrl, (croppedImages) => {
+      // Pass the desired number of pieces to cropImage function
+      cropImage(croppedImageDataUrl, divs, (croppedImages) => {
         setCroppedImages(croppedImages);
         setIsLoading(false); // Hide loader when cropping is done
       });
     }
   };
 
-  const [one] = useState<object>({ h: 1350, w: 2160 });
-  const [two] = useState<object>({ h: 1080, w: 2160 });
-  const [three] = useState<object>({ h: 566, w: 2160 });
+  const [one] = useState<object>({ h: 1350, w: 1080 });
+  const [two] = useState<object>({ h: 1080, w: 1080 });
+  const [three] = useState<object>({ h: 566, w: 1080 });
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +98,9 @@ export const Dashboard = () => {
               ></path>
             </svg>
             {image ? (
-              <span className="font-noto text-zinc-200">Now Select The Ratio</span>
+              <span className="font-noto text-zinc-200">
+                Now Select The Ratio
+              </span>
             ) : (
               <span className="font-noto text-gray-400">Select Your Pic</span>
             )}
@@ -112,9 +115,41 @@ export const Dashboard = () => {
         </div>
       </div>
 
+
+      <div className="flex items-center justify-center p-4">
+
+      <input
+        className="w-[40vw] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm font-bold text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        type="number"
+        name=""
+        id=""
+        min="2"
+        max="10"
+        placeholder="Enter number of pieces to crop from 2 to 10"
+        onChange={(e) => {
+          const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
+          if (
+            value !== "" &&
+            !isNaN(Number(value)) &&
+            Number(value) !== 0 &&
+            Number(value) >= 2 &&
+            Number(value) <= 10
+            ) {
+              setDivs(Number(value));
+            } else {
+              // Show an error message or set to a default value
+              // For example:
+              setDivs(2); // Set to a default value within the range
+              // Or show an error message to the user
+              // alert("Please enter a number between 2 and 10.");
+            }
+          }}
+          />
+          </div>
+
       {/* this is select ratio component */}
       <div className="transition flex justify-center">
-        {image &&(
+        {image && (
           <SizeSelector
             selectedSize={selectedSize}
             handleSizeChange={handleSizeChange}
@@ -123,9 +158,7 @@ export const Dashboard = () => {
       </div>
 
       <div className=" transition flex justify-center my-4">
-        {image && (
-          <CustomButton text="Crop" onCrop={onCrop} />
-        )}
+        {image && <CustomButton text="Crop" onCrop={onCrop} />}
       </div>
       <div className="flex justify-center">
         {croppedImages.map((croppedImage, index) => (
@@ -135,6 +168,7 @@ export const Dashboard = () => {
           </div>
         ))}
       </div>
+      {console.log(croppedImages)}
       <DownloadAllButton croppedImages={croppedImages} />
       <div className="flex justify-center">
         <FixedCropper
@@ -142,7 +176,7 @@ export const Dashboard = () => {
           ref={cropperRef}
           src={image}
           stencilSize={{
-            width: (selectedSizeValue as { w: number }).w,
+            width: (selectedSizeValue as { w: number }).w * divs,
             height: (selectedSizeValue as { h: number }).h,
           }}
           stencilProps={{
@@ -153,7 +187,6 @@ export const Dashboard = () => {
           }}
           imageRestriction={ImageRestriction.stencil}
         />
-        
       </div>
     </>
   );
