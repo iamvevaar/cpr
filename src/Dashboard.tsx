@@ -142,7 +142,8 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center p-4">
+        {/* this is input component for number of pieces we have */}
+          <div className="flex items-center justify-center p-4">
         <input
           ref={inputRef}
           className="w-[20rem] placeholder:text-[12px] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -183,10 +184,13 @@ export const Dashboard = () => {
         )}
       </div>
 
+
+      {/* this is crop button component */}
       <div className=" transition flex justify-center my-4">
         {image && <CustomButton text="Crop" onCrop={onCrop} />}
       </div>
 
+      {/* this is preview and download component */}
       <div className="grid grid-cols-2">
         <div className="flex flex-col items-end">
           {croppedImages.map((croppedImage, index) => (
