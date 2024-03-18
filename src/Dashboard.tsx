@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Coordinates } from "react-advanced-cropper";
 import "react-advanced-cropper/dist/style.css";
 
@@ -30,51 +30,95 @@ export const Dashboard = () => {
 
   const [divs, setDivs] = useState<number>(2);
 
-  const onCrop = () => {
-    setIsLoading(true); // Show loader when crop button is clicked
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (image || croppedImages.length > 0) {
+      const handleEsc = (event: KeyboardEvent) => {
+        if (event.keyCode === 27) {
+          setImage(null);
+          setCroppedImages([]);
+          if (inputRef.current) {
+            inputRef.current.value = ""; // Clear the file input
+          }
+        }
+      };
+      window.addEventListener("keydown", handleEsc);
+      return () => {
+        window.removeEventListener("keydown", handleEsc);
+      };
+    }
+  }, [image, croppedImages, inputRef]);
+
+  const onCrop = useCallback(() => {
+    setIsLoading(true);
     if (cropperRef.current) {
       setCoordinates(cropperRef.current.getCoordinates());
       const croppedImageDataUrl = cropperRef.current.getCanvas()?.toDataURL();
       setResult(croppedImageDataUrl);
-      // Call the cropImage function with the cropped image data URL and handleCroppedImages callback
-      // Pass the desired number of pieces to cropImage function
       cropImage(croppedImageDataUrl, divs, (croppedImages) => {
         setCroppedImages(croppedImages);
-        setIsLoading(false); // Hide loader when cropping is done
+        setIsLoading(false);
       });
     }
-  };
+  }, [divs]);
 
-  const [one] = useState<object>({ h: 1350, w: 1080 });
-  const [two] = useState<object>({ h: 1080, w: 1080 });
-  const [three] = useState<object>({ h: 566, w: 1080 });
   const [selectedSize, setSelectedSize] = useState<string>("one");
 
-  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedSize(event.target.value);
-  };
+  const handleSizeChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSelectedSize(event.target.value);
+    },
+    []
+  );
 
-  const selectedSizeValue =
-    selectedSize === "one" ? one : selectedSize === "two" ? two : three;
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setImage(result);
+  const selectedSizeValue = useMemo(() => {
+    const sizes: { [key: string]: { h: number; w: number } } = {
+      one: { h: 1350, w: 1080 },
+      two: { h: 1080, w: 1080 },
+      three: { h: 566, w: 1080 },
     };
-    reader.readAsDataURL(file);
-  };
+    return sizes[selectedSize];
+  }, [selectedSize]);
+
+  const handleImageChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        setImage(result);
+      };
+      reader.readAsDataURL(file);
+    },
+    []
+  );
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
+    if (
+      value !== "" &&
+      !isNaN(Number(value)) &&
+      Number(value) !== 0 &&
+      Number(value) >= 2 &&
+      Number(value) <= 10
+    ) {
+      setDivs(Number(value));
+    } else {
+      // Show an error message or set to a default value
+      // For example:
+      setDivs(2); // Set to a default value within the range
+      // Or show an error message to the user
+      // alert("Please enter a number between 2 and 10.");
+    }
+  }, [divs]);
 
   return (
     <>
       {/* Loader */}
       {isLoading && <Loader />}
-      {/* <input type="file" accept="image/*" onChange={handleImageChange} />
-       */}
 
       {/* this is file uploader component */}
       <div className="flex items-center justify-center p-4">
@@ -106,6 +150,8 @@ export const Dashboard = () => {
             )}
           </label>
           <input
+            disabled={image ? true : false}
+            ref={inputRef}
             id="fileInput"
             type="file"
             accept="image/*"
@@ -115,37 +161,20 @@ export const Dashboard = () => {
         </div>
       </div>
 
-
-      <div className="flex items-center justify-center p-4">
-
-      <input
-        className="w-[40vw] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm font-bold text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-        type="number"
-        name=""
-        id=""
-        min="2"
-        max="10"
-        placeholder="Enter number of pieces to crop from 2 to 10"
-        onChange={(e) => {
-          const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
-          if (
-            value !== "" &&
-            !isNaN(Number(value)) &&
-            Number(value) !== 0 &&
-            Number(value) >= 2 &&
-            Number(value) <= 10
-            ) {
-              setDivs(Number(value));
-            } else {
-              // Show an error message or set to a default value
-              // For example:
-              setDivs(2); // Set to a default value within the range
-              // Or show an error message to the user
-              // alert("Please enter a number between 2 and 10.");
-            }
-          }}
-          />
-          </div>
+        {/* this is input component for number of pieces we have */}
+          <div className="flex items-center justify-center p-4">
+        <input
+          ref={inputRef}
+          className="w-[20rem] placeholder:text-[12px] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          type="number"
+          name=""
+          id=""
+          min="2"
+          max="10"
+          placeholder="Enter number of pieces to crop from 2 to 10"
+          onChange={handleInputChange}
+        />
+      </div>
 
       {/* this is select ratio component */}
       <div className="transition flex justify-center">
@@ -157,19 +186,25 @@ export const Dashboard = () => {
         )}
       </div>
 
+
+      {/* this is crop button component */}
       <div className=" transition flex justify-center my-4">
         {image && <CustomButton text="Crop" onCrop={onCrop} />}
       </div>
-      <div className="flex justify-center">
-        {croppedImages.map((croppedImage, index) => (
-          <div key={index} className="inline-block w-32 m-2">
-            <div className="font-noto text-white text-center ">preview</div>
-            <img src={croppedImage} alt={`cropped-${index}`} />
-          </div>
-        ))}
+
+      {/* this is preview and download component */}
+      <div className="grid grid-cols-2">
+        <div className="flex flex-col items-end">
+          {croppedImages.map((croppedImage, index) => (
+            <div key={index} className="flex flex-col w-32 m-2">
+              <div className="font-noto text-white text-center text-[12px]">preview {index+1}</div>
+              <img src={croppedImage} alt={`cropped-${index}`} />
+            </div>
+          ))}
+        </div>
+        <DownloadAllButton croppedImages={croppedImages} />
       </div>
       {console.log(croppedImages)}
-      <DownloadAllButton croppedImages={croppedImages} />
       <div className="flex justify-center">
         <FixedCropper
           className="w-[90vw]"

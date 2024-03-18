@@ -18,9 +18,9 @@ const DownloadAllButton: React.FC<DownloadAllButtonProps> = ({ croppedImages }) 
   };
 
   return (
-        <div className="flex justify-center">
+        <div className="grid grid-cols-1 items-center">
           {croppedImages.map((croppedImage, index) => (
-                <button key={index} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2" onClick={() => handleDownload(croppedImage, index)}>
+                <button key={index} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2 w-32 h-[64px]" onClick={() => handleDownload(croppedImage, index)}>
                   Download Image {index + 1}
                 </button>
               ))}
