@@ -38,9 +38,7 @@ export const Dashboard = () => {
         if (event.keyCode === 27) {
           setImage(null);
           setCroppedImages([]);
-          if (inputRef.current) {
-            inputRef.current.value = ""; // Clear the file input
-          }
+          setDivs(2); // Reset slider value to default
         }
       };
       window.addEventListener("keydown", handleEsc);
@@ -48,7 +46,7 @@ export const Dashboard = () => {
         window.removeEventListener("keydown", handleEsc);
       };
     }
-  }, [image, croppedImages, inputRef]);
+  }, [image, croppedImages, setDivs]);
 
   // New function to handle the crop button click
   const onCrop = useCallback(() => {
@@ -101,23 +99,9 @@ export const Dashboard = () => {
   );
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim(); // Trim to remove leading and trailing whitespace
-    if (
-      value !== "" &&
-      !isNaN(Number(value)) &&
-      Number(value) !== 0 &&
-      Number(value) >= 2 &&
-      Number(value) <= 10
-    ) {
-      setDivs(Number(value));
-    } else {
-      // Show an error message or set to a default value
-      // For example:
-      setDivs(2); // Set to a default value within the range
-      // Or show an error message to the user
-      // alert("Please enter a number between 2 and 10.");
-    }
-  }, [divs]);
+    const value = e.target.value;
+    setDivs(Number(value));
+  }, [setDivs]);
 
   return (
     <>
@@ -165,19 +149,23 @@ export const Dashboard = () => {
         </div>
       </div>
 
-        {/* this is input component for number of pieces we have */}
-          <div className="flex items-center justify-center p-4">
+      {/* this is input component for number of pieces we have */}
+      <div className="flex items-center justify-center p-4">
         <input
           ref={inputRef}
           className="w-[20rem] placeholder:text-[12px] border-2 border-gray-300 rounded-lg p-4 bg-gray-900 text-sm text-center focus:bg-gray-900 focus:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          type="number"
+          type="range"
           name=""
           id=""
           min="2"
           max="10"
-          placeholder="Enter number of pieces to crop from 2 to 10"
+          value={divs}
           onChange={handleInputChange}
         />
+        <p className="text-white pl-3">
+        {divs}
+
+        </p>
       </div>
 
       {/* this is select ratio component */}
@@ -190,7 +178,6 @@ export const Dashboard = () => {
         )}
       </div>
 
-
       {/* this is crop button component */}
       <div className=" transition flex justify-center my-4">
         {image && <CustomButton text="Crop" onCrop={onCrop} />}
@@ -201,15 +188,17 @@ export const Dashboard = () => {
         <div className="flex flex-col items-end">
           {croppedImages.map((croppedImage, index) => (
             <div key={index} className="flex flex-col w-32 m-2">
-              <div className="font-noto text-white text-center text-[12px]">preview {index+1}</div>
+              <div className="font-noto text-white text-center text-[12px]">
+                preview {index + 1}
+              </div>
               <img src={croppedImage} alt={`cropped-${index}`} />
             </div>
           ))}
         </div>
         <DownloadAllButton croppedImages={croppedImages} />
       </div>
-        
-        {/* this is cropper component */}
+
+      {/* this is cropper component */}
       <div className="flex justify-center">
         <FixedCropper
           className="w-[90vw]"
